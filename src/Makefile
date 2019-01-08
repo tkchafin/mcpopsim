@@ -1,25 +1,36 @@
 #Makefile to build mcpopsim
 # -- macros
 CC= mpicc
+CXX=mpicxx
+LDFLAGS=-g
 CXXFLAGS= -O3 -std=c++11 -m64
-OBJECTS= deme.o allele_dat.o event.o locus.o
+OBJECTS= mcpopsim.o deme.o allele_dat.o event.o locus.o
+#LDLIBS=
 
 # -- targets
-all: mcpopsim
-	mcpopsim: $(OBJECTS)
-	$(CC) -o mcpopsim $(OBJECTS)
+#mcpopsim: mcpopsim.cpp mcpopsim.h $(OBJECTS)
+#	$(CXX) $(CXXFLAGS) -c mcpopsim.cpp
 
-deme.o: deme.c
-	$(CC) $(CXXFLAGS) -c deme.c
+all: mcpopsim allele_dat.o deme.o event.o locus.o mcpopsim.o
 
-events.o: events.c
-	$(CC) $(CXXFLAGS) -c events.c
+mcpopsim: $(OBJECTS)
+	$(CXX) $(LDFLAGS) -o mcpopsim $(OBJECTS) $(LDLIBS)
 
-allele_dat.o: allele_dat.c
-	$(CC) $(CXXFLAGS) -c allele_dat.c
+mcpopsim.o: mcpopsim.cpp
+	$(CXX) $(CXXFLAGS) -c mcpopsim.cpp
 
-locus.o: locus.c
-	$(CC) $(CXXFLAGS) -c locus.c
+allele_dat.o: allele_dat.cpp allele_dat.h locus.h
+	$(CXX) $(CXXFLAGS) -c allele_dat.cpp
+
+deme.o: deme.cpp deme.h allele_dat.h locus.h
+	$(CXX) $(CXXFLAGS) -c deme.cpp
+
+event.o: event.cpp event.h
+	$(CXX) $(CXXFLAGS) -c event.cpp
+
+locus.o: locus.cpp locus.h
+	$(CXX) $(CXXFLAGS) -c locus.cpp
+
 # -- remove stuff
 clean:
 	 rm -f mcpopsim $(OBJECTS)
